@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "dgSpecHash": "quC/Y6GGrO0RgUfzk1wh2AgfSw1pQxf1xxUV2H1NpiAK36BefvjfoB3OscSnysYIn713iyDQOm2JjNbeCTA3Rg==",
+  "success": true,
+  "projectFilePath": "E:\\LISI\\Praktika ne Comitas\\.netCore_MVC\\WebApplication1.Utility\\WebApplication1.Utility.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.8\\microsoft.aspnetcore.cryptography.internal.5.0.8.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\5.0.8\\microsoft.aspnetcore.cryptography.keyderivation.5.0.8.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\5.0.8\\microsoft.aspnetcore.identity.ui.5.0.8.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\5.0.0\\microsoft.extensions.caching.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\5.0.0\\microsoft.extensions.dependencyinjection.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\5.0.0\\microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\5.0.0\\microsoft.extensions.fileproviders.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.fileproviders.embedded\\5.0.8\\microsoft.extensions.fileproviders.embedded.5.0.8.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.identity.core\\5.0.8\\microsoft.extensions.identity.core.5.0.8.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.identity.stores\\5.0.8\\microsoft.extensions.identity.stores.5.0.8.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.logging\\5.0.0\\microsoft.extensions.logging.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\5.0.0\\microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.options\\5.0.0\\microsoft.extensions.options.5.0.0.nupkg.sha512",
+    "C:\\Users\\Erlis Lushtaku\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

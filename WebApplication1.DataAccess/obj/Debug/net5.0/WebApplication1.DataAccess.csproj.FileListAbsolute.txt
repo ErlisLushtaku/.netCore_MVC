@@ -1,0 +1,17 @@
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.DataAccess.deps.json
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.DataAccess.dll
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\ref\WebApplication1.DataAccess.dll
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.DataAccess.pdb
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.csproj.AssemblyReference.cache
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.AssemblyInfoInputs.cache
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.AssemblyInfo.cs
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.csproj.CoreCompileInputs.cache
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.dll
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\ref\WebApplication1.DataAccess.dll
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.pdb
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.Models.dll
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.Utility.dll
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.Models.pdb
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\bin\Debug\net5.0\WebApplication1.Utility.pdb
+E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.DataAccess\obj\Debug\net5.0\WebApplication1.DataAccess.csproj.CopyComplete
