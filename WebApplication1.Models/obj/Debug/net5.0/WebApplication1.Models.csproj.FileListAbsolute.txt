@@ -10,3 +10,15 @@ E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.Models\obj\Debug\net
 E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.dll
 E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.Models\obj\Debug\net5.0\ref\WebApplication1.Models.dll
 E:\LISI\Praktika ne Comitas\WebApplication1\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.pdb
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\bin\Debug\net5.0\WebApplication1.Models.deps.json
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\bin\Debug\net5.0\WebApplication1.Models.dll
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\bin\Debug\net5.0\ref\WebApplication1.Models.dll
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\bin\Debug\net5.0\WebApplication1.Models.pdb
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.csproj.AssemblyReference.cache
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.GeneratedMSBuildEditorConfig.editorconfig
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.AssemblyInfoInputs.cache
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.AssemblyInfo.cs
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.csproj.CoreCompileInputs.cache
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.dll
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\ref\WebApplication1.Models.dll
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.pdb

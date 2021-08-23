@@ -12,6 +12,7 @@ using WebApplication1.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Areas.Identity.Pages.Account;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApplication1.Areas.Admin.Controllers
 {
@@ -20,18 +21,114 @@ namespace WebApplication1.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserController(ApplicationDbContext db)
+        public UserController(ApplicationDbContext db, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
         {
             _db = db;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
+
+        [BindProperty]
+        public UpdateUser Input { get; set; }
 
         public IActionResult Index()
         {
             return View();
         }
 
-        //public IActionResult Upsert(string id)
+        public IActionResult Update(string id)
+        {
+            ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
+
+            if (applicationUser != null)
+            {
+                Input = new UpdateUser
+                {
+                    Id = id,
+                    Email = applicationUser.Email,
+                    Name = applicationUser.Name,
+                    StreetAddress = applicationUser.StreetAddress,
+                    City = applicationUser.City,
+                    State = applicationUser.State,
+                    PostalCode = applicationUser.PostalCode,
+                    PhoneNumber = applicationUser.PhoneNumber,
+                    CompanyId = applicationUser.CompanyId,
+                    Role = applicationUser.Role
+                };
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            Input.CompanyList = _db.Set<Company>().ToList().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            Input.RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+            {
+                Text = i,
+                Value = i
+            });
+
+            return View(Input);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update()
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _db.ApplicationUsers.Where(x => x.Id == Input.Id)
+                    //.Where(x => x.Email == Input.Email)
+                    .SingleOrDefaultAsync();
+
+                user.UserName = Input.Email;
+                user.Email = Input.Email;
+                user.CompanyId = Input.CompanyId;
+                user.StreetAddress = Input.StreetAddress;
+                user.City = Input.City;
+                user.State = Input.State;
+                user.PostalCode = Input.PostalCode;
+                user.Name = Input.Name;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.Role = Input.Role;
+
+                //_unitOfWork.Company.Update(user);
+
+                //_unitOfWork.Save();
+
+                //if (result.Succeeded)
+                //{
+                    if (user.Role == null)
+                    {
+                        await _userManager.AddToRoleAsync(user, SD.Role_Employee);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, user.Role);
+                    }
+
+                    await _db.SaveChangesAsync();
+
+
+                    return RedirectToAction(nameof(Index));
+                //}
+                //foreach (var error in result.Errors)
+                //{
+                //    ModelState.AddModelError(string.Empty, error.Description);
+                //}
+            }
+
+            return View(Input);
+        }
+
+        //public IActionResult Update(string id)
         //{
         //    ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
         //    if (applicationUser == null)
@@ -56,27 +153,6 @@ namespace WebApplication1.Areas.Admin.Controllers
         //    string _sinput = JsonSerializer.Serialize(input);
 
         //    return RedirectToPage("/Identity/Account/Register", new { sinput = _sinput });
-        // }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Upsert(Company company)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (company.Id == 0)
-        //        {
-        //            _unitOfWork.Company.Add(company);
-
-        //        }
-        //        else
-        //        {
-        //            _unitOfWork.Company.Update(company);
-        //        }
-        //        _unitOfWork.Save();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(company);
         //}
 
         #region API CALLS

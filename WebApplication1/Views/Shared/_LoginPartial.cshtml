@@ -17,7 +17,7 @@
         @if (User.IsInRole(SD.Role_Employee))
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register" asp-route-id="@claim.Value">EditUserDetails</a>
+                <a class="nav-link text-dark" asp-area="Admin" asp-controller="User" asp-action="Update" asp-route-id="@claim.Value">EditUserDetails</a>
             </li>
         }
 
