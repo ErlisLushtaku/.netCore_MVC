@@ -86,13 +86,31 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null, string sinput = null)
+        public string Id { get; set; }
+
+        public async Task OnGetAsync(string returnUrl = null, string id = null)
         {
             ReturnUrl = returnUrl;
+            Id = id;
 
-            if (sinput != null)
+            ApplicationUser applicationUser = (ApplicationUser)await _userManager.FindByIdAsync(id);
+
+            if (applicationUser != null)
             {
-                Input = JsonSerializer.Deserialize<InputModel>(sinput);
+                Input = new InputModel
+                {
+                    Email = applicationUser.Email,
+                    Password = "",
+                    ConfirmPassword = "",
+                    Name = applicationUser.Name,
+                    StreetAddress = applicationUser.StreetAddress,
+                    City = applicationUser.City,
+                    State = applicationUser.State,
+                    PostalCode = applicationUser.PostalCode,
+                    PhoneNumber = applicationUser.PhoneNumber,
+                    CompanyId = applicationUser.CompanyId,
+                    Role = applicationUser.Role
+                };
             }
             else
             {
@@ -121,6 +139,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             {
                 var user = new ApplicationUser
                 {
+                    Id = Id,
                     UserName = Input.Email,
                     Email = Input.Email,
                     CompanyId = Input.CompanyId,
@@ -134,7 +153,9 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                 };
 
                 IdentityResult result;
+                //var cond = await _userManager.FindByIdAsync(Id);
                 var cond = await _userManager.FindByEmailAsync(user.Email);
+
                 if (cond == null)
                 {
                     result = await _userManager.CreateAsync(user, Input.Password);
@@ -148,14 +169,14 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(SD.Role_Employee))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
-                    }
+                    //if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
+                    //{
+                    //    await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
+                    //}
+                    //if (!await _roleManager.RoleExistsAsync(SD.Role_Employee))
+                    //{
+                    //    await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
+                    //}
 
                     if(user.Role == null)
                     {

@@ -21,7 +21,7 @@ function loadDataTable() {
                 "render": function (data) {
                     return `
                             <div class="text-center">
-                                <a href="/Admin/User/Upsert/${data}" class="btn btn-success text-white" style="cursor:pointer">
+                                <a href="/Identity/Account/Register/${data}" class="btn btn-success text-white" style="cursor:pointer">
                                     <i class="fas fa-edit"></i> 
                                 </a>
                             </div>

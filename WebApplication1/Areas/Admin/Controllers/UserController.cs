@@ -31,32 +31,32 @@ namespace WebApplication1.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Upsert(string id)
-        {
-            ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
-            if (applicationUser == null)
-            {
-                return NotFound();
-            }
-            var input = new RegisterModel.InputModel
-            {
-                Email = applicationUser.Email,
-                Password = "",
-                ConfirmPassword = "",
-                Name = applicationUser.Name,
-                StreetAddress = applicationUser.StreetAddress,
-                City = applicationUser.City,
-                State = applicationUser.State,
-                PostalCode = applicationUser.PostalCode,
-                PhoneNumber = applicationUser.PhoneNumber,
-                CompanyId = applicationUser.CompanyId,
-                Role = applicationUser.Role
-            };
+        //public IActionResult Upsert(string id)
+        //{
+        //    ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
+        //    if (applicationUser == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var input = new RegisterModel.InputModel
+        //    {
+        //        Email = applicationUser.Email,
+        //        Password = "",
+        //        ConfirmPassword = "",
+        //        Name = applicationUser.Name,
+        //        StreetAddress = applicationUser.StreetAddress,
+        //        City = applicationUser.City,
+        //        State = applicationUser.State,
+        //        PostalCode = applicationUser.PostalCode,
+        //        PhoneNumber = applicationUser.PhoneNumber,
+        //        CompanyId = applicationUser.CompanyId,
+        //        Role = applicationUser.Role
+        //    };
 
-            string _sinput = JsonSerializer.Serialize(input);
+        //    string _sinput = JsonSerializer.Serialize(input);
 
-            return RedirectToPage("/Identity/Account/Register", new { sinput = _sinput });
-        }
+        //    return RedirectToPage("/Identity/Account/Register", new { sinput = _sinput });
+        // }
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
