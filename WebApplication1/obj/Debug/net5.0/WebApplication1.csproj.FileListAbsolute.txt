@@ -980,3 +980,7 @@ E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\obj\Debug\net5.0\WebApp
 E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\obj\Debug\net5.0\ref\WebApplication1.dll
 E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\obj\Debug\net5.0\WebApplication1.pdb
 E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\obj\Debug\net5.0\WebApplication1.genruntimeconfig.cache
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\obj\Debug\net5.0\Razor\Areas\Admin\Views\User\Update.cshtml.g.cs
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1\obj\Debug\net5.0\Razor\Areas\Admin\Views\User\ChangePassword.cshtml.g.cs

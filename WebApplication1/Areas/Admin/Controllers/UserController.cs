@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.DataAccess.Repository.IRepository;
 using WebApplication1.Models;
+using WebApplication1.Models.ViewModels;
 using WebApplication1.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using WebApplication1.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Areas.Identity.Pages.Account;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApplication1.Areas.Admin.Controllers
 {
@@ -20,64 +22,138 @@ namespace WebApplication1.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public UserController(ApplicationDbContext db)
+        public UserController(
+            ApplicationDbContext db, 
+            RoleManager<IdentityRole> roleManager, 
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager)
         {
             _db = db;
+            _roleManager = roleManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
+
+        [BindProperty]
+        public UpdateUserViewModel Input { get; set; }
 
         public IActionResult Index()
         {
             return View();
         }
 
-        //public IActionResult Upsert(string id)
-        //{
-        //    ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
-        //    if (applicationUser == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var input = new RegisterModel.InputModel
-        //    {
-        //        Email = applicationUser.Email,
-        //        Password = "",
-        //        ConfirmPassword = "",
-        //        Name = applicationUser.Name,
-        //        StreetAddress = applicationUser.StreetAddress,
-        //        City = applicationUser.City,
-        //        State = applicationUser.State,
-        //        PostalCode = applicationUser.PostalCode,
-        //        PhoneNumber = applicationUser.PhoneNumber,
-        //        CompanyId = applicationUser.CompanyId,
-        //        Role = applicationUser.Role
-        //    };
+        public IActionResult Update(string id)
+        {
+            //ApplicationUser applicationUser = _db.ApplicationUsers.Include(u => u.Company).FirstOrDefault(u => u.Id == id);
+            ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
 
-        //    string _sinput = JsonSerializer.Serialize(input);
+            if (applicationUser != null)
+            {
+                Input = new UpdateUserViewModel
+                {
+                    Id = id,
+                    Email = applicationUser.Email,
+                    Name = applicationUser.Name,
+                    StreetAddress = applicationUser.StreetAddress,
+                    City = applicationUser.City,
+                    State = applicationUser.State,
+                    PostalCode = applicationUser.PostalCode,
+                    PhoneNumber = applicationUser.PhoneNumber,
+                    CompanyId = applicationUser.CompanyId,
+                    Role = applicationUser.Role
+                };
+            }
+            else
+            {
+                return NotFound();
+            }
 
-        //    return RedirectToPage("/Identity/Account/Register", new { sinput = _sinput });
-        // }
+            Input.CompanyList = _db.Set<Company>().ToList().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            Input.RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+            {
+                Text = i,
+                Value = i
+            });
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Upsert(Company company)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (company.Id == 0)
-        //        {
-        //            _unitOfWork.Company.Add(company);
+            return View(Input);
+        }
 
-        //        }
-        //        else
-        //        {
-        //            _unitOfWork.Company.Update(company);
-        //        }
-        //        _unitOfWork.Save();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(company);
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update()
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _db.ApplicationUsers.Where(x => x.Id == Input.Id).SingleOrDefaultAsync();
+
+                user.UserName = Input.Email;
+                user.Email = Input.Email;
+                user.CompanyId = Input.CompanyId;
+                user.StreetAddress = Input.StreetAddress;
+                user.City = Input.City;
+                user.State = Input.State;
+                user.PostalCode = Input.PostalCode;
+                user.Name = Input.Name;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.Role = Input.Role;
+
+                if (user.Role != null)
+                {
+                    await _userManager.AddToRoleAsync(user, user.Role);
+                }
+
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(Input);
+        }
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View();
+                }
+
+                // Upon successfully changing the password refresh sign-in cookie
+                await _signInManager.RefreshSignInAsync(user);
+                ViewBag.Message = "Password changed successfully!";
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(model);
+        }
 
         #region API CALLS
 
@@ -102,19 +178,6 @@ namespace WebApplication1.Areas.Admin.Controllers
 
             return Json(new { data = userList });
         }
-
-        //[HttpDelete]
-        //public IActionResult Delete(int id)
-        //{
-        //    var objFromDb = _unitOfWork.Company.Get(id);
-        //    if (objFromDb == null)
-        //    {
-        //        return Json(new { success = false, message = "Error while deleting" });
-        //    }
-        //    _unitOfWork.Company.Remove(objFromDb);
-        //    _unitOfWork.Save();
-        //    return Json(new { success = true, message = "Delete Successful" });
-        //}
 
         #endregion
     }

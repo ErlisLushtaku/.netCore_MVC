@@ -86,60 +86,35 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
-        public string Id { get; set; }
-
-        public async Task OnGetAsync(string returnUrl = null, string id = null)
+        public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            Id = id;
 
-            ApplicationUser applicationUser = (ApplicationUser)await _userManager.FindByIdAsync(id);
-
-            if (applicationUser != null)
+            Input = new InputModel()
             {
-                Input = new InputModel
+                CompanyList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
                 {
-                    Email = applicationUser.Email,
-                    Password = "",
-                    ConfirmPassword = "",
-                    Name = applicationUser.Name,
-                    StreetAddress = applicationUser.StreetAddress,
-                    City = applicationUser.City,
-                    State = applicationUser.State,
-                    PostalCode = applicationUser.PostalCode,
-                    PhoneNumber = applicationUser.PhoneNumber,
-                    CompanyId = applicationUser.CompanyId,
-                    Role = applicationUser.Role
-                };
-            }
-            else
-            {
-                Input = new InputModel();
-            }
-
-            Input.CompanyList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
-            {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
-            Input.RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
-            {
-                Text = i,
-                Value = i
-            });
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+                RoleList = _roleManager.Roles.Where(u => u.Name != SD.Role_User_Indi).Select(x => x.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i
+                })
+            };
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser
                 {
-                    Id = Id,
                     UserName = Input.Email,
                     Email = Input.Email,
                     CompanyId = Input.CompanyId,
@@ -151,34 +126,22 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                     PhoneNumber = Input.PhoneNumber,
                     Role = Input.Role
                 };
-
-                IdentityResult result;
-                //var cond = await _userManager.FindByIdAsync(Id);
-                var cond = await _userManager.FindByEmailAsync(user.Email);
-
-                if (cond == null)
-                {
-                    result = await _userManager.CreateAsync(user, Input.Password);
-                }
-                else
-                {
-                    result = await _userManager.UpdateAsync(user);
-                }
+                var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    //if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
-                    //{
-                    //    await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
-                    //}
-                    //if (!await _roleManager.RoleExistsAsync(SD.Role_Employee))
-                    //{
-                    //    await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
-                    //}
+                    if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
+                    }
+                    if (!await _roleManager.RoleExistsAsync(SD.Role_Employee))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
+                    }
 
-                    if(user.Role == null)
+                    if (user.Role == null)
                     {
                         await _userManager.AddToRoleAsync(user, SD.Role_Employee);
                     }
@@ -225,5 +188,143 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
+        //public async Task OnGetAsync(string returnUrl = null, string id = null)
+        //{
+        //    ReturnUrl = returnUrl;
+        //    Id = id;
+
+        //    ApplicationUser applicationUser = (ApplicationUser)await _userManager.FindByIdAsync(id);
+
+        //    if (applicationUser != null)
+        //    {
+        //        Input = new InputModel
+        //        {
+        //            Email = applicationUser.Email,
+        //            Password = "",
+        //            ConfirmPassword = "",
+        //            Name = applicationUser.Name,
+        //            StreetAddress = applicationUser.StreetAddress,
+        //            City = applicationUser.City,
+        //            State = applicationUser.State,
+        //            PostalCode = applicationUser.PostalCode,
+        //            PhoneNumber = applicationUser.PhoneNumber,
+        //            CompanyId = applicationUser.CompanyId,
+        //            Role = applicationUser.Role
+        //        };
+        //    }
+        //    else
+        //    {
+        //        Input = new InputModel();
+        //    }
+
+        //    Input.CompanyList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
+        //    {
+        //        Text = i.Name,
+        //        Value = i.Id.ToString()
+        //    });
+        //    Input.RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+        //    {
+        //        Text = i,
+        //        Value = i
+        //    });
+
+        //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        //}
+
+        //public async Task<IActionResult> OnPostAsync(string returnUrl = null, string id = null)
+        //{
+        //    returnUrl ??= Url.Content("~/");
+        //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = new ApplicationUser
+        //        {
+        //            Id = Id,
+        //            UserName = Input.Email,
+        //            Email = Input.Email,
+        //            CompanyId = Input.CompanyId,
+        //            StreetAddress = Input.StreetAddress,
+        //            City = Input.City,
+        //            State = Input.State,
+        //            PostalCode = Input.PostalCode,
+        //            Name = Input.Name,
+        //            PhoneNumber = Input.PhoneNumber,
+        //            Role = Input.Role
+        //        };
+
+        //        IdentityResult result;
+        //        //var cond = await _userManager.FindByIdAsync(Id);
+        //        var cond = await _userManager.FindByIdAsync(id);
+
+        //        if (cond == null)
+        //        {
+        //            result = await _userManager.CreateAsync(user, Input.Password);
+        //        }
+        //        else
+        //        {
+        //            result = await _userManager.UpdateAsync(user);
+        //        }
+
+        //        if (result.Succeeded)
+        //        {
+        //            _logger.LogInformation("User created a new account with password.");
+
+        //            if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
+        //            {
+        //                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
+        //            }
+        //            if (!await _roleManager.RoleExistsAsync(SD.Role_Employee))
+        //            {
+        //                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
+        //            }
+
+        //            if (user.Role == null)
+        //            {
+        //                await _userManager.AddToRoleAsync(user, SD.Role_Employee);
+        //            }
+        //            else
+        //            {
+        //                await _userManager.AddToRoleAsync(user, user.Role);
+        //            }
+
+        //            //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //            //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        //            //var callbackUrl = Url.Page(
+        //            //    "/Account/ConfirmEmail",
+        //            //    pageHandler: null,
+        //            //    values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+        //            //    protocol: Request.Scheme);
+
+        //            //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+        //            //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+        //            if (_userManager.Options.SignIn.RequireConfirmedAccount)
+        //            {
+        //                return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+        //            }
+        //            else
+        //            {
+        //                if (user.Role == null)
+        //                {
+        //                    await _signInManager.SignInAsync(user, isPersistent: false);
+        //                    return LocalRedirect(returnUrl);
+        //                }
+        //                else
+        //                {
+        //                    //admin is registering a new user
+        //                    return RedirectToAction("Index", "User", new { Area = "Admin" });
+        //                }
+        //            }
+        //        }
+        //        foreach (var error in result.Errors)
+        //        {
+        //            ModelState.AddModelError(string.Empty, error.Description);
+        //        }
+        //    }
+
+        //    // If we got this far, something failed, redisplay form
+        //    return Page();
+        //}
     }
 }
