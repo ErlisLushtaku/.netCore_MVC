@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.DataAccess.Repository.IRepository;
 using WebApplication1.Models;
+using WebApplication1.Models.ViewModels;
 using WebApplication1.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +24,22 @@ namespace WebApplication1.Areas.Admin.Controllers
         private readonly ApplicationDbContext _db;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public UserController(ApplicationDbContext db, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public UserController(
+            ApplicationDbContext db, 
+            RoleManager<IdentityRole> roleManager, 
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager)
         {
             _db = db;
             _roleManager = roleManager;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [BindProperty]
-        public UpdateUser Input { get; set; }
+        public UpdateUserViewModel Input { get; set; }
 
         public IActionResult Index()
         {
@@ -41,11 +48,12 @@ namespace WebApplication1.Areas.Admin.Controllers
 
         public IActionResult Update(string id)
         {
+            //ApplicationUser applicationUser = _db.ApplicationUsers.Include(u => u.Company).FirstOrDefault(u => u.Id == id);
             ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
 
             if (applicationUser != null)
             {
-                Input = new UpdateUser
+                Input = new UpdateUserViewModel
                 {
                     Id = id,
                     Email = applicationUser.Email,
@@ -84,9 +92,7 @@ namespace WebApplication1.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _db.ApplicationUsers.Where(x => x.Id == Input.Id)
-                    //.Where(x => x.Email == Input.Email)
-                    .SingleOrDefaultAsync();
+                var user = await _db.ApplicationUsers.Where(x => x.Id == Input.Id).SingleOrDefaultAsync();
 
                 user.UserName = Input.Email;
                 user.Email = Input.Email;
@@ -99,61 +105,55 @@ namespace WebApplication1.Areas.Admin.Controllers
                 user.PhoneNumber = Input.PhoneNumber;
                 user.Role = Input.Role;
 
-                //_unitOfWork.Company.Update(user);
+                if (user.Role != null)
+                {
+                    await _userManager.AddToRoleAsync(user, user.Role);
+                }
 
-                //_unitOfWork.Save();
+                await _db.SaveChangesAsync();
 
-                //if (result.Succeeded)
-                //{
-                    if (user.Role == null)
-                    {
-                        await _userManager.AddToRoleAsync(user, SD.Role_Employee);
-                    }
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(user, user.Role);
-                    }
-
-                    await _db.SaveChangesAsync();
-
-
-                    return RedirectToAction(nameof(Index));
-                //}
-                //foreach (var error in result.Errors)
-                //{
-                //    ModelState.AddModelError(string.Empty, error.Description);
-                //}
+                return RedirectToAction(nameof(Index));
             }
 
             return View(Input);
         }
 
-        //public IActionResult Update(string id)
-        //{
-        //    ApplicationUser applicationUser = _db.ApplicationUsers.Find(id);
-        //    if (applicationUser == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var input = new RegisterModel.InputModel
-        //    {
-        //        Email = applicationUser.Email,
-        //        Password = "",
-        //        ConfirmPassword = "",
-        //        Name = applicationUser.Name,
-        //        StreetAddress = applicationUser.StreetAddress,
-        //        City = applicationUser.City,
-        //        State = applicationUser.State,
-        //        PostalCode = applicationUser.PostalCode,
-        //        PhoneNumber = applicationUser.PhoneNumber,
-        //        CompanyId = applicationUser.CompanyId,
-        //        Role = applicationUser.Role
-        //    };
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
 
-        //    string _sinput = JsonSerializer.Serialize(input);
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
 
-        //    return RedirectToPage("/Identity/Account/Register", new { sinput = _sinput });
-        //}
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View();
+                }
+
+                // Upon successfully changing the password refresh sign-in cookie
+                await _signInManager.RefreshSignInAsync(user);
+                ViewBag.Message = "Password changed successfully!";
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(model);
+        }
 
         #region API CALLS
 
@@ -178,19 +178,6 @@ namespace WebApplication1.Areas.Admin.Controllers
 
             return Json(new { data = userList });
         }
-
-        //[HttpDelete]
-        //public IActionResult Delete(int id)
-        //{
-        //    var objFromDb = _unitOfWork.Company.Get(id);
-        //    if (objFromDb == null)
-        //    {
-        //        return Json(new { success = false, message = "Error while deleting" });
-        //    }
-        //    _unitOfWork.Company.Remove(objFromDb);
-        //    _unitOfWork.Save();
-        //    return Json(new { success = true, message = "Delete Successful" });
-        //}
 
         #endregion
     }

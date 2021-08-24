@@ -24,33 +24,10 @@ function loadDataTable() {
                                 <a href="/Admin/User/Update/${data}" class="btn btn-success text-white" style="cursor:pointer">
                                     <i class="fas fa-edit"></i> 
                                 </a>
-                                <a onclick=Delete("/Admin/Company/Delete/${data}") class="btn btn-danger text-white" style="cursor:pointer">
-                                    <i class="fas fa-trash-alt"></i> 
-                                </a>
                             </div>
                            `;
                 }, "width": "25%"
             }
         ]
     });
-}
-
-function LockUnlock(id) {
-
-    $.ajax({
-        type: "POST",
-        url: '/Admin/User/LockUnlock',
-        data: JSON.stringify(id),
-        contentType: "application/json",
-        success: function (data) {
-            if (data.success) {
-                toastr.success(data.message);
-                dataTable.ajax.reload();
-            }
-            else {
-                toastr.error(data.message);
-            }
-        }
-    });
-
 }

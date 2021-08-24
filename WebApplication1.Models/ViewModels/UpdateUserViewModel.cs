@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApplication1.Models
+namespace WebApplication1.Models.ViewModels
 {
-    public class UpdateUser
+    public class UpdateUserViewModel
     {
         [Key]
         public string Id { get; set; }
