@@ -112,7 +112,12 @@ namespace WebApplication1.Areas.Admin.Controllers
 
                 await _db.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                if (User.IsInRole(SD.Role_Admin))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                return RedirectToAction("Index", "Home");
             }
 
             return View(Input);
@@ -177,6 +182,22 @@ namespace WebApplication1.Areas.Admin.Controllers
             }
 
             return Json(new { data = userList });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var objFromDb = _db.ApplicationUsers.Find(id);
+
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+
+            _db.ApplicationUsers.Remove(objFromDb);
+            await _db.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Delete Successful" });
         }
 
         #endregion
