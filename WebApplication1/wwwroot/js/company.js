@@ -30,7 +30,7 @@ function loadDataTable() {
                                 <a href="/Admin/Company/Upsert/${data}" class="btn btn-success text-white" style="cursor:pointer">
                                     <i class="fas fa-edit"></i> 
                                 </a>
-                                <a onclick=Delete("/Admin/Company/Delete/${data}") class="btn btn-danger text-white" style="cursor:pointer">
+                                <a onclick=Delete("${data}") class="btn btn-danger text-white" style="cursor:pointer">
                                     <i class="fas fa-trash-alt"></i> 
                                 </a>
                             </div>
@@ -41,7 +41,7 @@ function loadDataTable() {
     });
 }
 
-function Delete(url) {
+function Delete(id) {
     swal({
         title: "Are you sure you want to Delete?",
         text: "You will not be able to restore the data!",
@@ -52,7 +52,7 @@ function Delete(url) {
         if (willDelete) {
             $.ajax({
                 type: "DELETE",
-                url: url,
+                url: "/Admin/Company/Delete/" + id,
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.message);

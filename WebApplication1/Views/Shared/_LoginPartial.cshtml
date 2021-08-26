@@ -22,7 +22,7 @@
         </li>
         <li class="nav-item">
             @*<a class="nav-link text-danger" asp-area="Admin" asp-controller="User" asp-action="Delete" asp-route-id="@claim.Value">DeleteAccount</a>*@
-            <a class="nav-link text-danger" onclick=Delete("/Admin/User/Delete/@claim.Value")>DeleteAccount</a>
+            <a class="nav-link text-danger" onclick=Delete("@claim.Value")>DeleteAccount</a>
         </li>
 
         <li class="nav-item">

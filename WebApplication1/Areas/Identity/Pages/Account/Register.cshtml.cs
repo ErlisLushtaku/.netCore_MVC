@@ -167,15 +167,15 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        if (User.IsInRole(SD.Role_Employee))
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return LocalRedirect(returnUrl);
-                        }
-                        else
+                        if (User.IsInRole(SD.Role_Admin))
                         {
                             //admin is registering a new user
                             return RedirectToAction("Index", "User", new { Area = "Admin" });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
                         }
                     }
                 }
