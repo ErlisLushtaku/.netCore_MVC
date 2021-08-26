@@ -7,6 +7,7 @@ using WebApplication1.Models;
 using WebApplication1.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApplication1.DataAccess.Data;
 
 namespace WebApplication1.Areas.Admin.Controllers
 {
@@ -69,10 +70,57 @@ namespace WebApplication1.Areas.Admin.Controllers
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(JqueryDatatableParam param)
         {
-            var allObj = _unitOfWork.Company.GetAll();
-            return Json(new { data = allObj });
+            var companyList = _unitOfWork.Company.GetAll().ToList();
+
+            // Filter by search
+            if (!string.IsNullOrEmpty(param.sSearch))
+            {
+                companyList = companyList.Where(x => x.Name.ToLower().Contains(param.sSearch.ToLower())
+                                              || x.StreetAddress.ToLower().Contains(param.sSearch.ToLower())
+                                              || x.City.ToLower().Contains(param.sSearch.ToLower())
+                                              || x.State.ToLower().Contains(param.sSearch.ToLower())
+                                              || x.PhoneNumber.ToLower().Contains(param.sSearch.ToLower())).ToList();
+            }
+
+            // Sorting
+            var sortColumnIndex = param.iSortCol_0;
+            var sortDirection = param.sSortDir_0;
+            //  var sortColumnIndex = Convert.ToInt32(HttpContext.Request.Query["iSortCol_0"]);
+            //  var sortDirection = HttpContext.Request.Query["sSortDir_0"];
+            if (sortColumnIndex == 0)
+            {
+                companyList = sortDirection == "asc" ? companyList.OrderBy(c => c.Name).ToList() : companyList.OrderByDescending(c => c.Name).ToList();
+            }
+            else if (sortColumnIndex == 1)
+            {
+                companyList = sortDirection == "asc" ? companyList.OrderBy(c => c.StreetAddress).ToList() : companyList.OrderByDescending(c => c.StreetAddress).ToList();
+            }
+            else if (sortColumnIndex == 2)
+            {
+                companyList = sortDirection == "asc" ? companyList.OrderBy(c => c.City).ToList() : companyList.OrderByDescending(c => c.City).ToList();
+            }
+            else if (sortColumnIndex == 3)
+            {
+                companyList = sortDirection == "asc" ? companyList.OrderBy(c => c.State).ToList() : companyList.OrderByDescending(c => c.State).ToList();
+            }
+            else
+            {
+                companyList = sortDirection == "asc" ? companyList.OrderBy(c => c.PhoneNumber).ToList() : companyList.OrderByDescending(c => c.PhoneNumber).ToList();
+            }
+
+            // Pagination
+            var displayResult = companyList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
+            var totalRecords = companyList.Count();
+
+            return Json(new
+            {
+                param.sEcho,
+                iTotalRecords = totalRecords,
+                iTotalDisplayRecords = totalRecords,
+                aaData = displayResult
+            });
         }
 
         [HttpDelete]

@@ -4,18 +4,24 @@ $(document).ready(function () {
     loadDataTable();
 });
 
-
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "ajax": {
-            "url": "/Admin/Company/GetAll"
+        "sAjaxSource": "/Admin/Company/GetAll",
+        "bServerSide": true,
+        "bProcessing": true,
+        "bSearchable": true,
+        "order": [[0, 'asc']],
+        "language": {
+            "emptyTable": "No record found.",
+            "processing":
+                '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
         },
         "columns": [
-            { "data": "name", "width": "15%" },
-            { "data": "streetAddress", "width": "15%" },
-            { "data": "city", "width": "10%" },
-            { "data": "state", "width": "10%" },
-            { "data": "phoneNumber", "width": "15%" },
+            { "data": "name", "width": "15%", "searchable": true },
+            { "data": "streetAddress", "width": "15%", "searchable": true },
+            { "data": "city", "width": "10%", "searchable": true },
+            { "data": "state", "width": "10%", "searchable": true },
+            { "data": "phoneNumber", "width": "15%", "searchable": true },
             {
                 "data": "id",
                 "render": function (data) {
