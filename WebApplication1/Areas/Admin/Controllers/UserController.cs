@@ -234,7 +234,7 @@ namespace WebApplication1.Areas.Admin.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
-            var objFromDb = _db.ApplicationUsers.Find(id);
+            var objFromDb = await _db.ApplicationUsers.FindAsync(id);
 
             if (objFromDb == null)
             {
