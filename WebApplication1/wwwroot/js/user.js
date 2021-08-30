@@ -4,24 +4,18 @@ $(document).ready(function () {
     loadDataTable();
 });
 
+
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "sAjaxSource": "/Admin/User/GetAll",
-        "bServerSide": true,
-        "bProcessing": true,
-        "bSearchable": true,
-        "order": [[0, 'asc']],
-        "language": {
-            "emptyTable": "No record found.",
-            "processing":
-                '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+        "ajax": {
+            "url": "/Admin/User/GetAll"
         },
         "columns": [
-            { "data": "name", "width": "15%", "searchable": true },
-            { "data": "email", "width": "15%", "searchable": true },
-            { "data": "phoneNumber", "width": "15%", "searchable": true  },
-            { "data": "company.name", "width": "15%", "searchable": true  },
-            { "data": "role", "width": "15%", "searchable": true  },
+            { "data": "name", "width": "15%" },
+            { "data": "email", "width": "15%" },
+            { "data": "phoneNumber", "width": "15%" },
+            { "data": "company.name", "width": "15%" },
+            { "data": "role", "width": "15%" },
             {
                 "data": "id",
                 "render": function (data) {
@@ -30,18 +24,18 @@ function loadDataTable() {
                                 <a href="/Admin/User/Update/${data}" class="btn btn-success text-white" style="cursor:pointer">
                                     <i class="fas fa-edit"></i> 
                                 </a>
-                                <a onclick=Delete("${data}") class="btn btn-danger text-white" style="cursor:pointer">
+                                <a onclick=Delete("/Admin/User/Delete/${data}") class="btn btn-danger text-white" style="cursor:pointer">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
                             </div>
                            `;
                 }, "width": "25%"
             }
-        ],
+        ]
     });
 }
 
-function Delete(id) {
+function Delete(url) {
     swal({
         title: "Are you sure you want to Delete?",
         text: "You will not be able to restore the data!",
@@ -52,7 +46,7 @@ function Delete(id) {
         if (willDelete) {
             $.ajax({
                 type: "DELETE",
-                url: "/Admin/User/Delete/" + id,
+                url: url,
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.message);
@@ -61,7 +55,6 @@ function Delete(id) {
                     else {
                         toastr.error(data.message);
                     }
-
                     window.location.replace("/Identity/Account/Logout");
                 }
             });

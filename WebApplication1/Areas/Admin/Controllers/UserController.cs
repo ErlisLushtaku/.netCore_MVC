@@ -163,12 +163,11 @@ namespace WebApplication1.Areas.Admin.Controllers
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetAll(JqueryDatatableParam param)
+        public IActionResult GetAll()
         {
             var userList = _db.ApplicationUsers.Include(u => u.Company).ToList();
             var userRole = _db.UserRoles.ToList();
             var roles = _db.Roles.ToList();
-
             foreach (var user in userList)
             {
                 var roleId = userRole.FirstOrDefault(u => u.UserId == user.Id).RoleId;
@@ -182,59 +181,13 @@ namespace WebApplication1.Areas.Admin.Controllers
                 }
             }
 
-            // Filter by search
-            if (!string.IsNullOrEmpty(param.sSearch))
-            {
-                userList = userList.Where(x => x.Name.ToLower().Contains(param.sSearch.ToLower())
-                                              || x.Email.ToLower().Contains(param.sSearch.ToLower())
-                                              || x.PhoneNumber.ToLower().Contains(param.sSearch.ToLower())
-                                              || x.Company.Name.ToLower().Contains(param.sSearch.ToLower())
-                                              || x.Role.ToLower().Contains(param.sSearch.ToLower())).ToList();
-            }
-
-            // Sorting
-            var sortColumnIndex = param.iSortCol_0;
-            var sortDirection = param.sSortDir_0;
-            //  var sortColumnIndex = Convert.ToInt32(HttpContext.Request.Query["iSortCol_0"]);
-            //  var sortDirection = HttpContext.Request.Query["sSortDir_0"];
-            if (sortColumnIndex == 0)
-            {
-                userList = sortDirection == "asc" ? userList.OrderBy(c => c.Name).ToList() : userList.OrderByDescending(c => c.Name).ToList();
-            }
-            else if (sortColumnIndex == 1)
-            {
-                userList = sortDirection == "asc" ? userList.OrderBy(c => c.Email).ToList() : userList.OrderByDescending(c => c.Email).ToList();
-            }
-            else if (sortColumnIndex == 2)
-            {
-                userList = sortDirection == "asc" ? userList.OrderBy(c => c.PhoneNumber).ToList() : userList.OrderByDescending(c => c.PhoneNumber).ToList();
-            }
-            else if (sortColumnIndex == 3)
-            {
-                userList = sortDirection == "asc" ? userList.OrderBy(c => c.Company.Name).ToList() : userList.OrderByDescending(c => c.Company.Name).ToList();
-            }
-            else
-            {
-                userList = sortDirection == "asc" ? userList.OrderBy(c => c.Role).ToList() : userList.OrderByDescending(c => c.Role).ToList();
-            }
-
-            // Pagination
-            var displayResult = userList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
-            var totalRecords = userList.Count();
-
-            return Json(new
-            {
-                param.sEcho,
-                iTotalRecords = totalRecords,
-                iTotalDisplayRecords = totalRecords,
-                aaData = displayResult
-            });
+            return Json(new { data = userList });
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
-            var objFromDb = await _db.ApplicationUsers.FindAsync(id);
+            var objFromDb = _db.ApplicationUsers.Find(id);
 
             if (objFromDb == null)
             {
