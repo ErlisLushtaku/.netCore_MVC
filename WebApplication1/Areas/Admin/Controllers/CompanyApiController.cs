@@ -23,7 +23,7 @@ namespace WebApplication1.Areas.Admin.Controllers
 
         // GET: api/CompanyApi/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Company>> GetCompany(int id)
+        public async Task<IActionResult> GetCompany(int id)
         {
             var company = await _db.Companies.FindAsync(id);
 
@@ -32,17 +32,22 @@ namespace WebApplication1.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return company;
+            return Ok(company);
         }
 
         // PUT: api/CompanyApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCompany(int id, Company model)
+        public async Task<IActionResult> PutCompany(int id, [FromBody]Company model)
         {
             if (id != model.Id)
             {
                 return BadRequest();
+            }
+
+            if (!CompanyExists(id))
+            {
+                return NotFound();
             }
 
             var company = await _db.Companies.Where(x => x.Id == model.Id).SingleOrDefaultAsync();
@@ -60,23 +65,16 @@ namespace WebApplication1.Areas.Admin.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CompanyExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent();
+            return Accepted();
         }
 
         // POST: api/CompanyApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Company>> PostCompany(Company company)
+        public async Task<IActionResult> PostCompany([FromBody]Company company)
         {
             _db.Companies.Add(company);
             await _db.SaveChangesAsync();
@@ -146,7 +144,7 @@ namespace WebApplication1.Areas.Admin.Controllers
             var company = await _db.Companies.FindAsync(id);
             if (company == null)
             {
-                return Ok(new { success = false, message = "Error while deleting" });
+                return NotFound(new { success = false, message = "Error while deleting" });
             }
 
             _db.Companies.Remove(company);
@@ -155,9 +153,9 @@ namespace WebApplication1.Areas.Admin.Controllers
             return Ok(new { success = true, message = "Delete Successful" });
         }
 
-        private bool CompanyExists(int id)
+        private async Task<bool> CompanyExists(int id)
         {
-            return _db.Companies.Any(e => e.Id == id);
+            return await _db.Companies.AnyAsync(e => e.Id == id);
         }
     }
 }

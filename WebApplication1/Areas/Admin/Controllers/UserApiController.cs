@@ -28,7 +28,7 @@ namespace WebApplication1.Areas.Admin.Controllers
 
         // GET: api/UserApi/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationUser>> GetUser(string id)
+        public async Task<IActionResult> GetUser(string id)
         {
             var user = await _db.ApplicationUsers.FindAsync(id);
 
@@ -37,17 +37,22 @@ namespace WebApplication1.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return user;
+            return Ok(user);
         }
 
         // PUT: api/UserApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, ApplicationUser model)
+        public async Task<IActionResult> PutUser(string id, [FromBody]ApplicationUser model)
         {
             if (id != model.Id)
             {
                 return BadRequest();
+            }
+
+            if (!UserExists(id))
+            {
+                return NotFound();
             }
 
             var user = await _db.ApplicationUsers.Where(x => x.Id == model.Id).SingleOrDefaultAsync();
@@ -73,23 +78,16 @@ namespace WebApplication1.Areas.Admin.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent();
+            return Accepted();
         }
 
         // POST: api/UserApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Company>> PostUser(RegisterModel.InputModel Input)
+        public async Task<IActionResult> PostUser([FromBody]RegisterModel.InputModel Input)
         {
             var user = new ApplicationUser
             {
@@ -196,7 +194,7 @@ namespace WebApplication1.Areas.Admin.Controllers
             var user = await _db.ApplicationUsers.FindAsync(id);
             if (user == null)
             {
-                return Ok(new { success = false, message = "Error while deleting" });
+                return NotFound(new { success = false, message = "Error while deleting" });
             }
 
             _db.ApplicationUsers.Remove(user);
@@ -205,9 +203,9 @@ namespace WebApplication1.Areas.Admin.Controllers
             return Ok(new { success = true, message = "Delete Successful" });
         }
 
-        private bool UserExists(string id)
+        private async Task<bool> UserExists(string id)
         {
-            return _db.ApplicationUsers.Any(e => e.Id == id);
+            return await _db.ApplicationUsers.AnyAsync(e => e.Id == id);
         }
     }
 }
