@@ -2,75 +2,93 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication1.DataAccess.Repository.IRepository;
-using WebApplication1.Models;
-using WebApplication1.Utility;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.DataAccess.Data;
+using WebApplication1.Models;
 
 namespace WebApplication1.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
-    public class CompanyController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CompanyApiController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _db;
 
-        public CompanyController(IUnitOfWork unitOfWork)
+        public CompanyApiController(ApplicationDbContext db)
         {
-            _unitOfWork = unitOfWork;
+            _db = db;
         }
 
-        public IActionResult Index()
+        // GET: api/CompanyApi/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Company>> GetCompany(int id)
         {
-            return View();
-        }
+            var company = await _db.Companies.FindAsync(id);
 
-        public IActionResult Upsert(int? id)
-        {
-            Company company = new Company();
-            if (id == null)
-            {
-                //this is for create
-                return View(company);
-            }
-            //this is for edit
-            company = _unitOfWork.Company.Get(id.GetValueOrDefault());
             if (company == null)
             {
                 return NotFound();
             }
-            return View(company);
+
+            return company;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Company company)
+        // PUT: api/CompanyApi/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCompany(int id, Company model)
         {
-            if (ModelState.IsValid)
+            if (id != model.Id)
             {
-                if (company.Id == 0)
+                return BadRequest();
+            }
+
+            var company = await _db.Companies.Where(x => x.Id == model.Id).SingleOrDefaultAsync();
+            
+            company.Name = model.Name;
+            company.StreetAddress = model.StreetAddress;
+            company.City = model.City;
+            company.State = model.State;
+            company.PostalCode = model.PostalCode;
+            company.PhoneNumber = model.PhoneNumber;
+
+            try
+            {
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CompanyExists(id))
                 {
-                    _unitOfWork.Company.Add(company);
+                    return NotFound();
                 }
                 else
                 {
-                    _unitOfWork.Company.Update(company);
+                    throw;
                 }
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
             }
-            return View(company);
+
+            return NoContent();
         }
 
-
-        #region API CALLS
-
-        [HttpGet]
-        public IActionResult GetAll(JqueryDatatableParam param)
+        // POST: api/CompanyApi
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Company>> PostCompany(Company company)
         {
-            var companyList = _unitOfWork.Company.GetAll().ToList();
+            _db.Companies.Add(company);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtAction("GetCompany", new { id = company.Id }, company);
+        }
+
+        // GET: api/CompanyApi
+        [HttpGet]
+        public IActionResult GetCompanies([FromQuery]JqueryDatatableParam param)
+        {
+            var companyList = _db.Companies.ToList();
 
             // Filter by search
             if (!string.IsNullOrEmpty(param.sSearch))
@@ -112,7 +130,7 @@ namespace WebApplication1.Areas.Admin.Controllers
             var displayResult = companyList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
             var totalRecords = companyList.Count();
 
-            return Json(new
+            return Ok(new
             {
                 param.sEcho,
                 iTotalRecords = totalRecords,
@@ -121,20 +139,25 @@ namespace WebApplication1.Areas.Admin.Controllers
             });
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int id)
+        // DELETE: api/CompanyApi/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCompany(int id)
         {
-            var objFromDb = _unitOfWork.Company.Get(id);
-            if (objFromDb == null)
+            var company = await _db.Companies.FindAsync(id);
+            if (company == null)
             {
-                return Json(new { success = false, message = "Error while deleting" });
+                return Ok(new { success = false, message = "Error while deleting" });
             }
-            _unitOfWork.Company.Remove(objFromDb);
-            _unitOfWork.Save();
-            return Json(new { success = true, message = "Delete Successful" });
 
+            _db.Companies.Remove(company);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Delete Successful" });
         }
 
-        #endregion
+        private bool CompanyExists(int id)
+        {
+            return _db.Companies.Any(e => e.Id == id);
+        }
     }
 }

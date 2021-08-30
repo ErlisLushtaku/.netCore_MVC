@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "sAjaxSource": "/Admin/User/GetAll",
+        "sAjaxSource": "/api/UserApi",
         "bServerSide": true,
         "bProcessing": true,
         "bSearchable": true,
@@ -52,7 +52,7 @@ function Delete(id) {
         if (willDelete) {
             $.ajax({
                 type: "DELETE",
-                url: "/Admin/User/Delete/" + id,
+                url: "/api/UserApi/" + id,
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.message);
