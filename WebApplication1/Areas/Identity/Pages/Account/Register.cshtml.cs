@@ -97,7 +97,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                     Text = i.Name,
                     Value = i.Id.ToString()
                 }),
-                RoleList = _roleManager.Roles.Where(u => u.Name != SD.Role_User_Indi).Select(x => x.Name).Select(i => new SelectListItem
+                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
                 {
                     Text = i,
                     Value = i
@@ -167,15 +167,15 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        if (user.Role == null)
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return LocalRedirect(returnUrl);
-                        }
-                        else
+                        if (User.IsInRole(SD.Role_Admin))
                         {
                             //admin is registering a new user
                             return RedirectToAction("Index", "User", new { Area = "Admin" });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
                         }
                     }
                 }
