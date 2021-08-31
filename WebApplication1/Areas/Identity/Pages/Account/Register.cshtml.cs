@@ -126,6 +126,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                     PhoneNumber = Input.PhoneNumber,
                     Role = Input.Role
                 };
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

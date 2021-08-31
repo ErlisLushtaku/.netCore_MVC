@@ -6,7 +6,8 @@ $(document).ready(function () {
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "sAjaxSource": "/Admin/Company/GetAll",
+        //"sAjaxSource": "/api/CompanyApi",
+        "sAjaxSource": @Url.Action("GetCompanies", "CompanyApi"),
         "bServerSide": true,
         "bProcessing": true,
         "bSearchable": true,
@@ -41,7 +42,7 @@ function loadDataTable() {
     });
 }
 
-function Delete(id) {
+function Delete(Id) {
     swal({
         title: "Are you sure you want to Delete?",
         text: "You will not be able to restore the data!",
@@ -52,7 +53,7 @@ function Delete(id) {
         if (willDelete) {
             $.ajax({
                 type: "DELETE",
-                url: "/Admin/Company/Delete/" + id,
+                url: @Url.Action("DeleteCompany", "CompanyApi", new { id = Id }),
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.message);
@@ -66,3 +67,23 @@ function Delete(id) {
         }
     });
 }
+
+//const uri = 'api/todoitems';
+//let todos = [];
+
+//function getItems() {
+//    fetch(uri)
+//        .then(response => response.json())
+//        .then(data => _displayItems(data))
+//        .catch(error => console.error('Unable to get items.', error));
+//}
+
+//function deleteItem(id) {
+//    fetch(`${uri}/${id}`, {
+//        method: 'DELETE'
+//    })
+//        .then(() => getItems())
+//        .catch(error => console.error('Unable to delete item.', error));
+//}
+
+//getItems();
