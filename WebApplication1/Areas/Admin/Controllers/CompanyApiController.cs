@@ -45,7 +45,7 @@ namespace WebApplication1.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            if (!CompanyExists(id))
+            if (!await CompanyExists(id))
             {
                 return NotFound();
             }

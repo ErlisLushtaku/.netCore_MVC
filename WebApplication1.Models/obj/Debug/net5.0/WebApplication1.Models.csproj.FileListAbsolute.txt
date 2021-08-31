@@ -21,3 +21,4 @@ E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0
 E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.dll
 E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\ref\WebApplication1.Models.dll
 E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.pdb
+E:\LISI\Praktika ne Comitas\.netCore_MVC\WebApplication1.Models\obj\Debug\net5.0\WebApplication1.Models.csproj.AssemblyReference.cache

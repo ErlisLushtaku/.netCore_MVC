@@ -50,7 +50,7 @@ namespace WebApplication1.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            if (!UserExists(id))
+            if (!await UserExists(id))
             {
                 return NotFound();
             }
