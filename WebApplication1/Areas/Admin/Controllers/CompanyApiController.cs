@@ -79,7 +79,7 @@ namespace WebApplication1.Areas.Admin.Controllers
             _db.Companies.Add(company);
             await _db.SaveChangesAsync();
 
-            return CreatedAtAction("GetCompany", new { id = company.Id }, company);
+            return Created("GetCompany", company);
         }
 
         // GET: api/CompanyApi

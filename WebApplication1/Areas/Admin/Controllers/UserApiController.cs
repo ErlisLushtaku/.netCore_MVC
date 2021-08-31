@@ -114,7 +114,7 @@ namespace WebApplication1.Areas.Admin.Controllers
                 await _userManager.AddToRoleAsync(user, user.Role);
             }
 
-            return CreatedAtAction("GetCompany", new { id = user.Id }, user);
+            return Created("GetCompany", user);
         }
 
         // GET: api/CompanyApi

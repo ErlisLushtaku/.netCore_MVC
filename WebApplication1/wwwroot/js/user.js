@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "sAjaxSource": "/api/UserApi",
+        "sAjaxSource": @Url.Action("GetUsers", "UserApi"),
         "bServerSide": true,
         "bProcessing": true,
         "bSearchable": true,
@@ -41,7 +41,7 @@ function loadDataTable() {
     });
 }
 
-function Delete(id) {
+function Delete(Id) {
     swal({
         title: "Are you sure you want to Delete?",
         text: "You will not be able to restore the data!",
@@ -52,7 +52,7 @@ function Delete(id) {
         if (willDelete) {
             $.ajax({
                 type: "DELETE",
-                url: "/api/UserApi/" + id,
+                url: @Url.Action("DeleteUser", "UserApi", new { id = Id }),
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.message);
